@@ -2,8 +2,34 @@ import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 
+const members = [
+  'ryuusei',
+  'peach',
+  'snaps',
+  'udon',
+  'ellie',
+  'jin',
+  'anny',
+  'rin'
+];
+
+const NUMBER_OF_MEMBERS = members.length;
+
+const genThreeRandomNumbers = (max: number, numbers = new Set<number>()): number[] => {
+  if (numbers.size === 3) {
+    return Array.from(numbers);
+  }
+
+  const random = Math.floor(Math.random() * max)
+  if (numbers.has(random)) {
+    return genThreeRandomNumbers(max, numbers);
+  }
+
+  return genThreeRandomNumbers(max, numbers.add(random));
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [numbers, setNumbers] = useState<number[]>([])
 
   return (
     <div className="App">
@@ -11,31 +37,18 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <p>Hello Vite + React!</p>
         <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
+          <button type="button" onClick={() => {
+            const n = genThreeRandomNumbers(NUMBER_OF_MEMBERS);
+            setNumbers(n);
+          }}>
+            { numbers.map(n => {
+              return (
+                <div>
+                  {members[n]}
+                </div>
+              );
+            })}
           </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
         </p>
       </header>
     </div>
