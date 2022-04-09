@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import logo from './logo.svg'
 import './App.css'
 
 const members = [
@@ -34,8 +33,8 @@ const genThreeRandomNumbers = (max: number, numbers = new Set<number>()): number
 // render countdown and show whether top, mid, bot is correct
 function App() {
   const [current, setCurrent] = useState<number>(0);
-  const [indexes, setIndexes] = useState<number[]>([])
-  const correctOrder = [...indexes].sort((a, b) => a-b); 
+  const [targeted, setTargeted] = useState<number[]>([])
+  const correctOrder = [...targeted].sort((a, b) => a-b); 
   // sort mutates existing array, hence clone
 
   return (
@@ -56,9 +55,9 @@ function App() {
         <p>
           <button type="button" onClick={() => {
             const n = genThreeRandomNumbers(NUMBER_OF_MEMBERS);
-            setIndexes(n);
+            setTargeted(n);
           }}>
-            { indexes.map(i => (
+            { targeted.map(i => (
                 <div>
                   {members[i]}
                 </div>
