@@ -29,25 +29,35 @@ const genThreeRandomNumbers = (max: number, numbers = new Set<number>()): number
 }
 
 function App() {
-  const [numbers, setNumbers] = useState<number[]>([])
+  const [current, setCurrent] = useState<number>(0);
+  const [indexes, setIndexes] = useState<number[]>([])
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '20px'}}>
+          {
+            members.map((name, index) => (
+              <div onClick={() => setCurrent(index)}>
+                {name}
+              </div>
+            ))
+          }
+        </div>
+        {
+          `Current: ${members[current]}`
+        }
         <p>
           <button type="button" onClick={() => {
             const n = genThreeRandomNumbers(NUMBER_OF_MEMBERS);
-            setNumbers(n);
+            setIndexes(n);
           }}>
-            { numbers.map(n => {
-              return (
+            { indexes.map(i => (
                 <div>
-                  {members[n]}
+                  {members[i]}
                 </div>
-              );
-            })}
+              )
+            )}
           </button>
         </p>
       </header>
