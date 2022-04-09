@@ -28,6 +28,10 @@ const genThreeRandomNumbers = (max: number, numbers = new Set<number>()): number
   return genThreeRandomNumbers(max, numbers.add(random));
 }
 
+
+// TODO: make it DRYer...if needed
+// render selection top, mid, bottom
+// render countdown and show whether top, mid, bot is correct
 function App() {
   const [current, setCurrent] = useState<number>(0);
   const [indexes, setIndexes] = useState<number[]>([])
