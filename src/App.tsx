@@ -31,6 +31,8 @@ const genThreeRandomNumbers = (max: number, numbers = new Set<number>()): number
 function App() {
   const [current, setCurrent] = useState<number>(0);
   const [indexes, setIndexes] = useState<number[]>([])
+  const correctOrder = [...indexes].sort((a, b) => a-b); 
+  // sort mutates existing array, hence clone
 
   return (
     <div className="App">
@@ -59,6 +61,18 @@ function App() {
               )
             )}
           </button>
+          <div>
+          {
+            `Correct order:`
+          }
+          </div>
+          { 
+            correctOrder.map(c => (
+              <div>
+                {members[c]}
+              </div>
+            ))
+          }
         </p>
       </header>
     </div>
