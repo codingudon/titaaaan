@@ -1,85 +1,115 @@
-import { useState } from 'react'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import {
+  Box,
+  Button,
+  Grommet,
+  Page,
+  PageContent,
+  RadioButton,
+  Text,
+  RangeInput,
+} from "grommet";
+import { Avatar } from "./Avatar";
+import { generateThreeRandomMembers, Member } from "./members";
+import { Pick } from "./Pick";
+import { Result } from "./Result";
+import useCountDown from "react-countdown-hook";
 
-const members = [
-  'ryuusei',
-  'peach',
-  'snaps',
-  'udon',
-  'ellie',
-  'jin',
-  'anny',
-  'rin'
-];
+type Position = "top" | "mid" | "bot" | "skip";
 
-const NUMBER_OF_MEMBERS = members.length;
+const initialTimeLimit = 1000; // initial time in milliseconds, defaults to 60000
+const interval = 70;
 
-const genThreeRandomNumbers = (max: number, numbers = new Set<number>()): number[] => {
-  if (numbers.size === 3) {
-    return Array.from(numbers);
-  }
-
-  const random = Math.floor(Math.random() * max)
-  if (numbers.has(random)) {
-    return genThreeRandomNumbers(max, numbers);
-  }
-
-  return genThreeRandomNumbers(max, numbers.add(random));
-}
-
-
-// TODO: make it DRYer...if needed
-// render selection top, mid, bottom
-// render countdown and show whether top, mid, bot is correct
 function App() {
-  const [current, setCurrent] = useState<number>(0);
-  const [targeted, setTargeted] = useState<number[]>([])
-  const correctOrder = [...targeted].sort((a, b) => a-b); 
-  // sort mutates existing array, hence clone
+  const [current, setCurrent] = useState<Member | null>(null);
+  const [selection, setSelection] = useState<null | Position>(null);
+  const [targeted, setTargeted] = useState<Member[]>([]);
+  const [expected, setExpected] = useState<Member[]>([]);
+  const [timeLimit, setTimeLimit] = useState(initialTimeLimit);
+  const [timeLeft, { start }] = useCountDown(timeLimit, interval);
+  const timeIsUp = timeLeft === 0;
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '20px'}}>
-          {
-            members.map((name, index) => (
-              <div onClick={() => setCurrent(index)}>
-                {name}
-              </div>
-            ))
-          }
-        </div>
-        {
-          `Current: ${members[current]}`
-        }
-        <p>
-          <button type="button" onClick={() => {
-            const n = genThreeRandomNumbers(NUMBER_OF_MEMBERS);
-            setTargeted(n);
-          }}>
-            { targeted.map(i => (
-                <div>
-                  {members[i]}
-                </div>
-              )
-            )}
-          </button>
-          <div>
-          {
-            `Correct order:`
-          }
-          </div>
-          { 
-            correctOrder.map(c => (
-              <div>
-                {members[c]}
-              </div>
-            ))
-          }
-        </p>
-      </header>
-    </div>
-  )
+    <Grommet plain>
+      <Page kind="narrow">
+        <PageContent>
+          <Pick onSelection={setCurrent} current={current} />
+          <Box margin={{ top: "medium", bottom: "medium" }}>
+            <Text>Difficulty</Text>
+            <RangeInput
+              value={timeLimit}
+              min={1000}
+              max={2000}
+              onChange={(event) => setTimeLimit(parseInt(event.target.value))}
+            />
+            <Text>{`${timeLimit / 1000}s`}</Text>
+          </Box>
+          {current && (
+            <Button
+              primary
+              type="button"
+              label={timeIsUp ? "Start" : `${timeLeft / 1000}s`}
+              size="large"
+              onClick={() => {
+                const { random, order } = generateThreeRandomMembers();
+                setTargeted(random);
+                setExpected(order);
+                start();
+                setSelection(null);
+              }}
+            />
+          )}
+          {current && (
+            <>
+              <Box
+                direction="row"
+                justify="between"
+                margin={{ top: "medium", bottom: "medium" }}
+              >
+                <Box gap="medium">
+                  {[
+                    { value: "top", label: "top" },
+                    { value: "mid", label: "mid" },
+                    { value: "bot", label: "bottom" },
+                    { value: "skip", label: "skip" },
+                  ].map(({ value, label }) => {
+                    return (
+                      <RadioButton
+                        name="radio"
+                        disabled={timeIsUp}
+                        checked={value === selection}
+                        label={label}
+                        onChange={() => setSelection(value as Position)}
+                      />
+                    );
+                  })}
+                </Box>
+                <Box
+                  direction="row"
+                  gap="medium"
+                  margin={{ top: "medium", bottom: "medium" }}
+                  justify="center"
+                >
+                  {targeted.map((t) => (
+                    <Avatar avatar={t.avatar} />
+                  ))}
+                </Box>
+              </Box>
+
+              <Box margin={{ top: "medium", bottom: "medium" }}>
+                <Result
+                  expected={expected}
+                  current={current}
+                  selection={selection}
+                />
+              </Box>
+            </>
+          )}
+        </PageContent>
+      </Page>
+    </Grommet>
+  );
 }
 
-export default App
+export default App;
