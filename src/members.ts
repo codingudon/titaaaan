@@ -5,8 +5,8 @@ const priority = [
   "udon",
   "ellie",
   "jin",
-  "anny",
   "rin",
+  "anny",
 ];
 
 export const members = priority.map((p, index) => ({

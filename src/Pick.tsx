@@ -1,14 +1,17 @@
-import { Box, Button, Heading, Stack } from "grommet";
+import { Box, Button, Heading, Text } from "grommet";
 import { Avatar } from "./Avatar";
 import { members } from "./members";
 
 export const Pick = ({ onSelection, current }) => {
+  const priority = members.map((m) => m.name).join(" > ");
+
   if (current) {
     return (
       <>
         <Box direction="row" gap="medium" align="center">
           <Heading>Current</Heading>
           <Avatar avatar={current.avatar} />
+          <Box direction="row">{priority}</Box>
         </Box>
 
         <Box margin={{ top: "medium", bottom: "medium" }}>
