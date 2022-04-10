@@ -36,7 +36,8 @@ function App() {
     const { random, order } = generateThreeRandomMembers();
     setTargeted(random);
     setExpected(order);
-    start();
+    console.log("timeLimit", timeLimit);
+    start(timeLimit);
     setSelection(null);
   };
   useKeyPressEvent(" ", commence);
