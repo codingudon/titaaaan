@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useKeyPressEvent } from "react-use";
 import "./App.css";
 import {
   Box,
@@ -28,7 +29,17 @@ function App() {
   const [expected, setExpected] = useState<Member[]>([]);
   const [timeLimit, setTimeLimit] = useState(initialTimeLimit);
   const [timeLeft, { start }] = useCountDown(timeLimit, interval);
+
   const timeIsUp = timeLeft === 0;
+
+  const commence = () => {
+    const { random, order } = generateThreeRandomMembers();
+    setTargeted(random);
+    setExpected(order);
+    start();
+    setSelection(null);
+  };
+  useKeyPressEvent(" ", commence);
 
   return (
     <Grommet plain>
@@ -49,15 +60,13 @@ function App() {
             <Button
               primary
               type="button"
-              label={timeIsUp ? "Start" : `${timeLeft / 1000}s`}
+              label={
+                timeIsUp
+                  ? "Start (click or press spacebar)"
+                  : `${timeLeft / 1000}s`
+              }
               size="large"
-              onClick={() => {
-                const { random, order } = generateThreeRandomMembers();
-                setTargeted(random);
-                setExpected(order);
-                start();
-                setSelection(null);
-              }}
+              onClick={commence}
             />
           )}
           {current && (
